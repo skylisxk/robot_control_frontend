@@ -14,6 +14,16 @@ const routes = [
     children: [
 
       {
+        path: '/products',
+        name: 'Products',
+        component: () => import('../views/ProductsView.vue'),
+        meta: {
+          title: '产品管理',
+          requireAuth: true
+        }
+      },
+
+      {
         path: '/users',
         name: 'Users',
         component: () => import('../views/UsersView.vue'),
