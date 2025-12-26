@@ -12,6 +12,17 @@ const routes = [
     path: '/',
     component: MainLayout,
     children: [
+
+      {
+        path: '/users',
+        name: 'Users',
+        component: () => import('../views/UsersView.vue'),
+        meta: {
+          title: '用户管理',
+          requireAuth: true,
+          requireAdmin: true  // 标记需要管理员权限
+        }
+      },
       {
         path: '',
         redirect: '/dashboard'
