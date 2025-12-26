@@ -37,7 +37,7 @@
             <span>设计管理</span>
           </template>
           <el-menu-item index="/design/products">产品设计</el-menu-item>
-          <el-menu-item index="/design/components">部件设计</el-menu-item>
+          <!-- <el-menu-item index="/design/components">部件设计</el-menu-item> -->
         </el-sub-menu>
         
         <el-menu-item index="/orders">

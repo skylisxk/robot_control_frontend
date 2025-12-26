@@ -26,11 +26,11 @@ const routes = [
         name: 'DesignProducts',
         component: () => import('@/views/design/ProductDesignView.vue')
       },
-      {
-        path: 'design/components',
-        name: 'DesignComponents',
-        component: () => import('@/views/design/ComponentDesignView.vue')
-      },
+      // {
+      //   path: 'design/components',
+      //   name: 'DesignComponents',
+      //   component: () => import('@/views/design/ComponentDesignView.vue')
+      // },
       {
         path: 'orders',
         name: 'Orders',
