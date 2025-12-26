@@ -124,7 +124,7 @@
       </template>
 
       <el-table
-        :data="productBlueprintList"
+        :data="displayBlueprintList"
         v-loading="loading"
         @selection-change="handleSelectionChange"
         style="width: 100%"
@@ -485,6 +485,79 @@ const productBlueprintList = ref([
   }
 ])
 
+//原始数据
+const originalBlueprintList = ref([
+  {
+    id: 1,
+    code: 'PROD-20240001',
+    name: '六轴工业机器人',
+    model: 'IRB-6700',
+    description: '六轴工业机器人的总体设计蓝图，包含机械结构、电气控制和运动规划。',
+    status: 'active',
+    usedCount: 3,
+    creator: '张三',
+    createTime: '2024-01-15 09:30:00',
+    updater: '张三',
+    updateTime: '2024-01-20 14:25:00'
+  },
+  {
+    id: 2,
+    code: 'PROD-20240002',
+    name: '焊接机器人',
+    model: 'WR-5000',
+    description: '自动焊接机器人的设计蓝图，包含焊接头、送丝系统和控制单元。',
+    status: 'active',
+    usedCount: 1,
+    creator: '李四',
+    createTime: '2024-01-18 10:15:00',
+    updater: '李四',
+    updateTime: '2024-01-22 16:45:00'
+  },
+  {
+    id: 3,
+    code: 'PROD-20240003',
+    name: '智能巡检机器人',
+    model: 'XR-2000',
+    description: '用于工厂巡检的智能移动机器人设计蓝图。',
+    status: 'draft',
+    usedCount: 0,
+    creator: '王五',
+    createTime: '2024-01-20 13:20:00',
+    updater: '王五',
+    updateTime: '2024-01-22 09:10:00'
+  },
+  {
+    id: 4,
+    code: 'PROD-20240004',
+    name: '搬运机器人',
+    model: 'TR-3000',
+    description: '物料搬运机器人的设计蓝图，包含抓取机构和导航系统。',
+    status: 'active',
+    usedCount: 2,
+    creator: '赵六',
+    createTime: '2024-01-22 11:30:00',
+    updater: '赵六',
+    updateTime: '2024-01-22 17:20:00'
+  },
+  {
+    id: 5,
+    code: 'PROD-20240005',
+    name: '装配机器人',
+    model: 'AR-4000',
+    description: '用于产品装配的精密机器人设计蓝图。',
+    status: 'draft',
+    usedCount: 0,
+    creator: '钱七',
+    createTime: '2024-01-23 14:45:00',
+    updater: '钱七',
+    updateTime: '2024-01-23 14:45:00'
+  }
+])
+
+// 显示在表格中的数据（会被搜索过滤）
+const displayBlueprintList = ref([])
+
+
 // 计算属性
 const editDialogTitle = computed(() => {
   return isEditMode.value ? '修改产品蓝图' : '新增产品蓝图'
@@ -525,11 +598,11 @@ const handleDelete = async (row) => {
       }
     )
     
-    const index = productBlueprintList.value.findIndex(item => item.id === row.id)
+    const index = originalBlueprintList.value.findIndex(item => item.id === row.id)
     if (index !== -1) {
-      productBlueprintList.value.splice(index, 1)
+      originalBlueprintList.value.splice(index, 1)
       ElMessage.success('删除成功')
-      loadData()
+      loadData() // 这会重新加载并更新显示数据
     }
   } catch {
     // 用户取消
@@ -560,10 +633,10 @@ const handleBatchDelete = async () => {
     )
     
     const idsToDelete = selectedRows.value.map(item => item.id)
-    productBlueprintList.value = productBlueprintList.value.filter(item => !idsToDelete.includes(item.id))
+    originalBlueprintList.value = originalBlueprintList.value.filter(item => !idsToDelete.includes(item.id))
     selectedRows.value = []
     ElMessage.success(`成功删除 ${idsToDelete.length} 个蓝图`)
-    loadData()
+    loadData() // 重新加载数据
   } catch {
     // 用户取消
   }
@@ -577,13 +650,25 @@ const handleViewDetail = (row) => {
 const handleSearch = () => {
   pagination.current = 1
   loadData()
+  
+  // 如果有搜索条件，显示提示
+  if (searchParams.code || searchParams.name) {
+    ElMessage.info('正在执行搜索...')
+  }
 }
 
 const handleReset = () => {
+  // 清空搜索参数
   searchParams.code = ''
   searchParams.name = ''
+  
+  // 重置分页
   pagination.current = 1
+  
+  // 重新加载数据（显示全部）
   loadData()
+  
+  ElMessage.info('搜索条件已重置')
 }
 
 const handleSelectionChange = (rows) => {
@@ -616,10 +701,11 @@ const handleEditSubmit = async () => {
     
     setTimeout(() => {
       if (isEditMode.value) {
-        const index = productBlueprintList.value.findIndex(item => item.code === editForm.code)
+        // 修改操作
+        const index = originalBlueprintList.value.findIndex(item => item.code === editForm.code)
         if (index !== -1) {
-          productBlueprintList.value[index] = {
-            ...productBlueprintList.value[index],
+          originalBlueprintList.value[index] = {
+            ...originalBlueprintList.value[index],
             ...editForm,
             updateTime: new Date().toISOString(),
             updater: '当前用户'
@@ -627,9 +713,10 @@ const handleEditSubmit = async () => {
         }
         ElMessage.success('修改成功')
       } else {
+        // 添加操作
         const newBlueprint = {
           id: Date.now(),
-          code: `PROD-${new Date().getFullYear()}${String(productBlueprintList.value.length + 1).padStart(4, '0')}`,
+          code: `PROD-${new Date().getFullYear()}${String(originalBlueprintList.value.length + 1).padStart(4, '0')}`,
           ...editForm,
           usedCount: 0,
           creator: '当前用户',
@@ -637,13 +724,13 @@ const handleEditSubmit = async () => {
           updater: '当前用户',
           updateTime: new Date().toISOString()
         }
-        productBlueprintList.value.unshift(newBlueprint)
+        originalBlueprintList.value.unshift(newBlueprint)
         ElMessage.success('创建成功')
       }
       
       showEditDialog.value = false
       submitting.value = false
-      loadData()
+      loadData() // 重新加载数据
     }, 1000)
   } catch (error) {
     submitting.value = false
@@ -663,12 +750,41 @@ const loadData = () => {
   loading.value = true
   
   setTimeout(() => {
-    statistics.total = productBlueprintList.value.length
-    statistics.used = productBlueprintList.value.filter(item => item.usedCount > 0).length
-    statistics.active = productBlueprintList.value.filter(item => item.status === 'active').length
-    statistics.draft = productBlueprintList.value.filter(item => item.status === 'draft').length
+    // 1. 每次搜索都从原始数据开始
+    let filteredData = [...originalBlueprintList.value]
     
-    pagination.total = productBlueprintList.value.length
+    // 2. 执行搜索过滤
+    if (searchParams.code.trim()) {
+      const searchCode = searchParams.code.trim().toLowerCase()
+      filteredData = filteredData.filter(item => 
+        item.code.toLowerCase().includes(searchCode)
+      )
+    }
+    
+    if (searchParams.name.trim()) {
+      const searchName = searchParams.name.trim().toLowerCase()
+      filteredData = filteredData.filter(item => 
+        item.name.toLowerCase().includes(searchName)
+      )
+    }
+    
+    // 3. 更新统计数据（基于原始数据）
+    statistics.total = originalBlueprintList.value.length
+    statistics.used = originalBlueprintList.value.filter(item => item.usedCount > 0).length
+    statistics.active = originalBlueprintList.value.filter(item => item.status === 'active').length
+    statistics.draft = originalBlueprintList.value.filter(item => item.status === 'draft').length
+    
+    // 4. 计算分页数据
+    const total = filteredData.length
+    const startIndex = (pagination.current - 1) * pagination.size
+    const endIndex = Math.min(startIndex + pagination.size, total)
+    
+    // 5. 更新显示数据（分页后的过滤数据）
+    displayBlueprintList.value = filteredData.slice(startIndex, endIndex)
+    
+    // 6. 更新分页信息
+    pagination.total = total
+    
     loading.value = false
   }, 500)
 }
@@ -703,6 +819,8 @@ const formatDateTime = (dateString) => {
 
 // 生命周期
 onMounted(() => {
+  // 初始化显示数据
+  displayBlueprintList.value = [...originalBlueprintList.value]
   loadData()
 })
 </script>
