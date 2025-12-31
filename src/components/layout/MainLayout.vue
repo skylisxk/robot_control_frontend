@@ -189,7 +189,7 @@ const handleLogout = () => {
   width: 250px;
   background: #001529;
   transition: width 0.3s;
-  display: flex;
+  display: flex; 
   flex-direction: column;
   
   &.collapsed {
