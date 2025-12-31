@@ -34,6 +34,16 @@ const routes = [
       },
 
       {
+        path: '/components',
+        name: 'Components',
+        component: () => import('../views/ComponentsView.vue'),
+        meta: {
+          title: '部件管理',
+          requireAuth: true
+        }
+      },
+
+      {
         path: '/users',
         name: 'Users',
         component: () => import('../views/UsersView.vue'),
