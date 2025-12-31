@@ -5,17 +5,17 @@
     <aside class="sidebar" :class="{ collapsed: sidebarCollapsed }">
       <!-- Logo区域 -->
       <div class="logo-area">
-        <div class="logo">
-          🤖
-        </div>
-        <h2 v-show="!sidebarCollapsed">机器人EDMS</h2>
-        <div class="collapse-btn" @click="toggleSidebar">
-          <el-icon>
-            <Fold v-if="!sidebarCollapsed" />
-            <Expand v-else />
-          </el-icon>
-        </div>
+      <div class="logo">
+        🤖
       </div>
+      <h2 v-show="!sidebarCollapsed">机器人EDMS</h2>
+      <div class="collapse-btn" @click="toggleSidebar">
+        <el-icon>
+          <Fold v-if="!sidebarCollapsed" />
+          <Expand v-else />
+        </el-icon>
+      </div>
+    </div>
       
       <!-- 导航菜单 -->
       <el-menu
@@ -74,45 +74,9 @@
         </div>
         
         <div class="right-actions">
-          <!-- 搜索框 -->
-          <el-input
-            v-model="searchText"
-            placeholder="搜索..."
-            class="search-input"
-            :prefix-icon="Search"
-            style="width: 200px; margin-right: 20px;"
-          />
+          <!-- 移除了搜索框 -->
           
-          <!-- 通知 -->
-          <el-dropdown trigger="click">
-            <div class="notification-btn">
-              <el-badge :value="3" class="item">
-                <el-icon size="20"><Bell /></el-icon>
-              </el-badge>
-            </div>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item>
-                  <div class="notification-item">
-                    <div class="notification-title">新订单提醒</div>
-                    <div class="notification-time">2分钟前</div>
-                  </div>
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <div class="notification-item">
-                    <div class="notification-title">设计任务更新</div>
-                    <div class="notification-time">1小时前</div>
-                  </div>
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <div class="notification-item">
-                    <div class="notification-title">系统维护通知</div>
-                    <div class="notification-time">3小时前</div>
-                  </div>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <!-- 移除了通知功能 -->
           
           <!-- 用户信息 -->
           <el-dropdown>
@@ -154,7 +118,7 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { 
   House, Setting, Document, Box, Goods, User, 
-  Search, Bell, ArrowDown, SwitchButton,
+  ArrowDown, SwitchButton,
   Fold, Expand
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -164,9 +128,6 @@ const router = useRouter()
 
 // 侧边栏状态
 const sidebarCollapsed = ref(false)
-
-// 搜索文本
-const searchText = ref('')
 
 // 用户信息
 const userName = ref('管理员')
@@ -315,36 +276,6 @@ const handleLogout = () => {
     display: flex;
     align-items: center;
     gap: 20px;
-  }
-}
-
-.notification-btn {
-  cursor: pointer;
-  position: relative;
-  color: #666;
-  
-  &:hover {
-    color: #1890ff;
-  }
-  
-  :deep(.el-badge__content) {
-    transform: translate(50%, -50%);
-  }
-}
-
-.notification-item {
-  padding: 8px 0;
-  min-width: 200px;
-  
-  .notification-title {
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 4px;
-  }
-  
-  .notification-time {
-    font-size: 12px;
-    color: #999;
   }
 }
 
