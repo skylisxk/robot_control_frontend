@@ -24,6 +24,16 @@ const routes = [
       },
 
       {
+        path: '/orders',
+        name: 'Orders',
+        component: () => import('../views/OrdersView.vue'),
+        meta: {
+          title: '订单管理',
+          requireAuth: true
+        }
+      },
+
+      {
         path: '/users',
         name: 'Users',
         component: () => import('../views/UsersView.vue'),
